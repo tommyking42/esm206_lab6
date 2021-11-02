@@ -1,0 +1,64 @@
+---
+title: "ESM 206 Lab 6"
+author: "Tommy King"
+date: "11/2/2021"
+output: html_document
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(palmerpenguins)
+library(broom)
+library(equatiomatic)
+```
+
+## Rank based test example
+
+Mann-Whitney U (non-parametric alternative to an unpaired or independent 2-sample t-test). 
+
+H0: Equal ranks (or medians)
+HA: Ranks are not equal (or medians are not equal)
+
+### Create samples
+
+`set.seed()` to create "pseudorandom but reproducible sample"
+
+```{r}
+set.seed(1414)
+gp_1 <- sample.int(20, size = 15, replace = TRUE)
+
+set.seed(1424) 
+gp_2 <- sample.int(30, size = 15, replace = TRUE)
+```
+
+Take a quick look at the distributinos using `hist()`
+
+```{r}
+hist(gp_1)
+hist(gp_2)
+```
+
+Try a t-test so that we can compare the results. 
+```{r}
+ttest <- t.test(gp_1, gp_2)
+
+# if these data were paired, I can just add the argument `paired = "TRUE" ` within the t-test() function.
+```
+
+This p-value means that if our samples are drawn from populations with the same mean (i.e. if the null hypothesis is true), there is `r round(ttest$p.value, 2)` probability of finding sample means *at least as different* as mine by random chance. 
+
+[A more comprehensive explanation of diffrernce between groups... actually means, data spread, effect size]... there is no significant difference (t(df) = t-statistic value, p =).
+
+
+### Mann Whitney U rank based test
+
+We will use the `wilcox.test()` function to performa a two-sample rank-based test. 
+
+```{r}
+mwu <- wilcox.test(gp_1, gp_2)
+```
+
+This p-value means that if our samples are drawn from populations with the same median, there is a 28% chance of finding sample medians at least as different as ours by random chance. 
+
+NO signigicant difference in medians (Mann Whitney U; U = `r mwu$statistic`, p = `mwu$p.value,2)`)
