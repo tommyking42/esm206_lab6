@@ -61,4 +61,63 @@ mwu <- wilcox.test(gp_1, gp_2)
 
 This p-value means that if our samples are drawn from populations with the same median, there is a 28% chance of finding sample medians at least as different as ours by random chance. 
 
-NO signigicant difference in medians (Mann Whitney U; U = `r mwu$statistic`, p = `mwu$p.value,2)`)
+NO signigicant difference in medians (Mann Whitney U; U = `r mwu$statistic`, p = `r round(mwu$p.value,2)`)
+
+Exmaple text for reporting: "The medians of group A (M = 22.4g) and group B (M= 31.2 g) did not differ significantly (Mann Whitney U, ...)" 
+
+## SImple Linear regression 
+
+Two *continuous quantitative* variables that you are trying to understand the relationship between, and you think tthat a linear relationship makes sense. 
+
+Use the `penguins` data from {palmerpenguins}, exploring flipper length (x) versus body mass (y). 
+
+```{r}
+# MAke an exploratory scatterplot of penguin flipper length on x-axis and body mass on y-axis. 
+ggplot(data = penguins, aes(x = flipper_length_mm, y = body_mass_g)) + 
+  geom_jitter(aes(color = species)) + 
+  geom_smooth(method = "lm")
+```
+
+
+### Find the Model estimates or coefficients 
+
+Use the `lm()` function for linear model
+
+
+```{r}
+penguin_lm <- lm(body_mass_g ~ flipper_length_mm, data = penguins)
+
+```
+
+Model Coefficients: `r penguin_lm$coefficients`
+Flipper length coefficient: `r penguin_lm$coefficients[2]`
+
+### USe `broom::tidy()` to get a tidy output from lm()
+
+```{r}
+penguin_lm_tidy <- tidy(penguin_lm)
+
+penguin_lm_tidy 
+```
+
+### Use `broom::glance()` to get output of model fit and statistical significance 
+
+```{r}
+penguin_lm_glance <- glance(penguin_lm)
+
+```
+
+### Use equatiomatic:: extract_eq() to return model in LaTex
+```{r}
+extract_eq(model = penguin_lm, use_coefs = TRUE) # add the `use_coefs()` function to put in the actual coefficient values in the equation
+
+```
+
+### USe plot() function to automatically produce diagnostic plots
+
+```{r}
+plot(penguin_lm)
+
+```
+
+Residuals: difference or variance between actual values and what my model predicts them to be. (Line of best fit vs. actual plot points)
